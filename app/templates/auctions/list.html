@@ -3,5 +3,22 @@
 {% block content %}
 <h2>Auctions</h2>
 
-<p>This is the auction list page.</p>
+{% if auctions %}
+    <ul>
+        {% for a in auctions %}
+            <li>
+                <strong>{{ a.title }}</strong>
+                <br>
+                Category: {{ a.category }}<br>
+                Starting bid: {{ a.starting_bid }} SEK<br>
+                Ends: {{ a.end_datetime }}<br>
+                <a href="/auctions/{{ a.id }}">View auction</a>
+            </li>
+            <hr>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No auctions found.</p>
+{% endif %}
+
 {% endblock %}
