@@ -1,24 +1,20 @@
-{% extends "base.html" %}
-
-{% block content %}
+{% extends "base.html" %} {% block content %}
 <h2>Auctions</h2>
 
 {% if auctions %}
-    <ul>
-        {% for a in auctions %}
-            <li>
-                <strong>{{ a.title }}</strong>
-                <br>
-                Category: {{ a.category }}<br>
-                Starting bid: {{ a.starting_bid }} SEK<br>
-                Ends: {{ a.end_datetime }}<br>
-                <a href="{{ url_for('auctions.auction_detail', auction_id=a.id) }}">View auction</a>
-            </li>
-            <hr>
-        {% endfor %}
-    </ul>
+<ul>
+  {% for a in auctions %}
+  <li>
+    <strong>{{ a.title }}</strong>
+    Category: {{ a.category }} Starting bid: {{ a.starting_bid }} SEK Ends: {{
+    a.end_datetime }}
+    <a href="{{ url_for('auctions.auction_detail', auction_id=a.id) }}"
+      >View auction</a
+    >
+  </li>
+  <hr />
+  {% endfor %}
+</ul>
 {% else %}
-    <p>No auctions found.</p>
-{% endif %}
-
-{% endblock %}
+<p>No auctions found.</p>
+{% endif %} {% endblock %}
