@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Auction Site</title>
-</head>
-<body>
-
+  </head>
+  <body>
     <h1>Auction Site</h1>
-    <hr>
-
-    {% block content %}{% endblock %}
-
-</body>
+    <hr />
+    {% with messages = get_flashed_messages() %} {% if messages %}
+    <ul>
+      {% for message in messages %}
+      <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+    <hr />
+    {% endif %} {% endwith %} {% block content %}{% endblock %}
+  </body>
 </html>
