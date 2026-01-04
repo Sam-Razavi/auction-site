@@ -8,5 +8,20 @@
 <p><strong>Starting bid:</strong> {{ auction.starting_bid }} SEK</p>
 <p><strong>Auction ends:</strong> {{ auction.end_datetime }}</p>
 
+<h3>Top bids</h3>
+
+{% if top_bids and top_bids|length > 0 %}
+    <ol>
+        {% for b in top_bids %}
+            <li>
+                {{ b.bidder_email }} - {{ b.bid_amount }} SEK ({{ b.bid_datetime }})
+            </li>
+        {% endfor %}
+    </ol>
+{% else %}
+    <p>No bids yet.</p>
+{% endif %}
+
+
 <p><a href="{{ url_for('auctions.auction_list') }}">Back to list</a></p>
 {% endblock %}

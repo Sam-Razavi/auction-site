@@ -16,4 +16,7 @@ def auction_detail(auction_id):
     if auction is None:
         abort(404)
 
-    return render_template("auctions/detail.html", auction=auction)
+    top_bids = repo.get_top_bids(auction_id)
+
+    return render_template("auctions/detail.html", auction=auction, top_bids=top_bids)
+
