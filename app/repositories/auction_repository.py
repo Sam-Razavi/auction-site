@@ -3,6 +3,8 @@ from app.db import get_db
 
 
 class AuctionRepository:
+    # -------- Auctions --------
+
     def get_all(self):
         db = get_db()
         rows = db.execute(
@@ -25,6 +27,39 @@ class AuctionRepository:
             (auction_id,)
         ).fetchone()
         return row
+
+    def create_auction(self, title, category, description, starting_bid, end_datetime):
+        db = get_db()
+        db.execute(
+            """
+            INSERT INTO auctions (title, category, description, starting_bid, end_datetime)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (title, category, description, starting_bid, end_datetime)
+        )
+        db.commit()
+
+    def update_auction(self, auction_id, title, category, description, starting_bid, end_datetime):
+        db = get_db()
+        db.execute(
+            """
+            UPDATE auctions
+            SET title = ?, category = ?, description = ?, starting_bid = ?, end_datetime = ?
+            WHERE id = ?
+            """,
+            (title, category, description, starting_bid, end_datetime, auction_id)
+        )
+        db.commit()
+
+    def delete_auction(self, auction_id):
+        db = get_db()
+        # remove related data first
+        db.execute("DELETE FROM bids WHERE auction_id = ?", (auction_id,))
+        db.execute("DELETE FROM reactions WHERE auction_id = ?", (auction_id,))
+        db.execute("DELETE FROM auctions WHERE id = ?", (auction_id,))
+        db.commit()
+
+    # -------- Bids --------
 
     def get_top_bids(self, auction_id, limit=2):
         db = get_db()
@@ -49,5 +84,13 @@ class AuctionRepository:
             VALUES (?, ?, ?, ?)
             """,
             (auction_id, bidder_email, bid_amount, now_str)
+        )
+        db.commit()
+
+    def delete_bids_for_auction(self, auction_id):
+        db = get_db()
+        db.execute(
+            "DELETE FROM bids WHERE auction_id = ?",
+            (auction_id,)
         )
         db.commit()

@@ -6,6 +6,8 @@
 <p>You are logged in as admin.</p>
 
 <ul>
+    <li><a href="{{ url_for('admin.admin_auctions') }}">Manage auctions</a></li>
     <li><a href="{{ url_for('admin.logout') }}">Logout</a></li>
 </ul>
+
 {% endblock %}
