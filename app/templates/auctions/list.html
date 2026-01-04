@@ -12,7 +12,7 @@
                 Category: {{ a.category }}<br>
                 Starting bid: {{ a.starting_bid }} SEK<br>
                 Ends: {{ a.end_datetime }}<br>
-                <a href="/auctions/{{ a.id }}">View auction</a>
+                <a href="{{ url_for('auctions.auction_detail', auction_id=a.id) }}">View auction</a>
             </li>
             <hr>
         {% endfor %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>{{ auction.title }}</h2>
+
+<p><strong>Category:</strong> {{ auction.category }}</p>
+<p><strong>Description:</strong> {{ auction.description }}</p>
+<p><strong>Starting bid:</strong> {{ auction.starting_bid }} SEK</p>
+<p><strong>Auction ends:</strong> {{ auction.end_datetime }}</p>
+
+<p><a href="{{ url_for('auctions.auction_list') }}">Back to list</a></p>
+{% endblock %}
