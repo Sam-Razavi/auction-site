@@ -1,10 +1,23 @@
-from flask import render_template, abort
+from datetime import datetime
+from flask import render_template, abort, request, redirect, url_for, flash
 from app.auctions import auctions_bp
 from app.repositories.auction_repository import AuctionRepository
-from flask import render_template, abort, request, redirect, url_for, flash
-
 
 repo = AuctionRepository()
+
+
+def compute_status(end_datetime_str, bid_count):
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
+
+    # since we store dates like "YYYY-MM-DD HH:MM" this simple string compare works
+    if end_datetime_str <= now_str:
+        return "Ended"
+
+    if bid_count == 0:
+        return "Upcoming"
+
+    return "Ongoing"
+
 
 @auctions_bp.route("/")
 def auction_list():
@@ -14,7 +27,6 @@ def auction_list():
     max_price_str = request.args.get("max_price", "").strip()
     end_before = request.args.get("end_before", "").strip()
 
-    # convert price inputs (student simple)
     min_price = None
     max_price = None
 
@@ -32,26 +44,34 @@ def auction_list():
 
     categories = repo.get_categories()
 
-    # if any filter is used -> filter first
+    # get auctions (filters and/or search)
     if category or min_price is not None or max_price is not None or end_before:
-        auctions = repo.filter_auctions(
+        auctions_rows = repo.filter_auctions(
             category=category if category else None,
             min_price=min_price,
             max_price=max_price,
             end_before=end_before if end_before else None
         )
 
-        # if q is also used, do a simple in-python filter (easy student solution)
         if q:
             q_lower = q.lower()
-            auctions = [a for a in auctions if q_lower in a["title"].lower() or q_lower in a["description"].lower()]
-
+            auctions_rows = [
+                a for a in auctions_rows
+                if q_lower in a["title"].lower() or q_lower in a["description"].lower()
+            ]
     else:
-        # no filters -> normal search or all
         if q:
-            auctions = repo.search(q)
+            auctions_rows = repo.search(q)
         else:
-            auctions = repo.get_all()
+            auctions_rows = repo.get_all()
+
+    # convert rows -> dict so we can attach "status"
+    auctions = []
+    for a in auctions_rows:
+        a_dict = dict(a)
+        bid_count = repo.get_bid_count(a_dict["id"])
+        a_dict["status"] = compute_status(a_dict["end_datetime"], bid_count)
+        auctions.append(a_dict)
 
     return render_template(
         "auctions/list.html",
@@ -67,12 +87,17 @@ def auction_list():
 
 @auctions_bp.route("/auctions/<int:auction_id>")
 def auction_detail(auction_id):
-    auction = repo.get_by_id(auction_id)
-    if auction is None:
+    row = repo.get_by_id(auction_id)
+    if row is None:
         abort(404)
+
+    auction = dict(row)
 
     top_bids = repo.get_top_bids(auction_id)
     likes, dislikes = repo.get_reaction_counts(auction_id)
+
+    bid_count = repo.get_bid_count(auction_id)
+    auction["status"] = compute_status(auction["end_datetime"], bid_count)
 
     return render_template(
         "auctions/detail.html",
@@ -81,6 +106,7 @@ def auction_detail(auction_id):
         likes=likes,
         dislikes=dislikes
     )
+
 
 @auctions_bp.route("/auctions/<int:auction_id>/bid", methods=["POST"])
 def place_bid(auction_id):
@@ -91,7 +117,6 @@ def place_bid(auction_id):
     bidder_email = request.form.get("bidder_email", "").strip()
     bid_amount_str = request.form.get("bid_amount", "").strip()
 
-    # very simple validation (student level)
     if bidder_email == "" or bid_amount_str == "":
         flash("Please enter email and bid amount.")
         return redirect(url_for("auctions.auction_detail", auction_id=auction_id))
@@ -105,6 +130,7 @@ def place_bid(auction_id):
     repo.add_bid(auction_id, bidder_email, bid_amount)
     flash("Your bid was placed!")
     return redirect(url_for("auctions.auction_detail", auction_id=auction_id))
+
 
 @auctions_bp.route("/auctions/<int:auction_id>/react", methods=["POST"])
 def react(auction_id):
@@ -120,6 +146,3 @@ def react(auction_id):
     repo.add_reaction(auction_id, reaction_type)
     flash("Thanks for your feedback!")
     return redirect(url_for("auctions.auction_detail", auction_id=auction_id))
-
-
-

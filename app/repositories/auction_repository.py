@@ -16,20 +16,6 @@ class AuctionRepository:
         ).fetchall()
         return rows
 
-    def search(self, keyword):
-        db = get_db()
-        kw = f"%{keyword}%"
-        rows = db.execute(
-            """
-            SELECT id, title, category, description, starting_bid, end_datetime
-            FROM auctions
-            WHERE title LIKE ? OR description LIKE ?
-            ORDER BY end_datetime ASC
-            """,
-            (kw, kw)
-        ).fetchall()
-        return rows
-
     def get_by_id(self, auction_id):
         db = get_db()
         row = db.execute(
@@ -109,6 +95,59 @@ class AuctionRepository:
         )
         db.commit()
 
+    def get_bid_count(self, auction_id):
+        db = get_db()
+        row = db.execute(
+            "SELECT COUNT(*) AS cnt FROM bids WHERE auction_id = ?",
+            (auction_id,)
+        ).fetchone()
+        return row["cnt"] if row else 0
+
+    # -------- Reactions --------
+
+    def get_reaction_counts(self, auction_id):
+        db = get_db()
+        likes_row = db.execute(
+            "SELECT COUNT(*) AS cnt FROM reactions WHERE auction_id = ? AND reaction_type = 'like'",
+            (auction_id,)
+        ).fetchone()
+        dislikes_row = db.execute(
+            "SELECT COUNT(*) AS cnt FROM reactions WHERE auction_id = ? AND reaction_type = 'dislike'",
+            (auction_id,)
+        ).fetchone()
+
+        likes = likes_row["cnt"] if likes_row else 0
+        dislikes = dislikes_row["cnt"] if dislikes_row else 0
+        return likes, dislikes
+
+    def add_reaction(self, auction_id, reaction_type):
+        db = get_db()
+        now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
+        db.execute(
+            """
+            INSERT INTO reactions (auction_id, reaction_type, created_at)
+            VALUES (?, ?, ?)
+            """,
+            (auction_id, reaction_type, now_str)
+        )
+        db.commit()
+
+    # -------- Search / Filters --------
+
+    def search(self, keyword):
+        db = get_db()
+        kw = f"%{keyword}%"
+        rows = db.execute(
+            """
+            SELECT id, title, category, description, starting_bid, end_datetime
+            FROM auctions
+            WHERE title LIKE ? OR description LIKE ?
+            ORDER BY end_datetime ASC
+            """,
+            (kw, kw)
+        ).fetchall()
+        return rows
+
     def get_categories(self):
         db = get_db()
         rows = db.execute(
@@ -150,30 +189,3 @@ class AuctionRepository:
 
         rows = db.execute(sql, tuple(params)).fetchall()
         return rows
-
-    def get_reaction_counts(self, auction_id):
-        db = get_db()
-        likes_row = db.execute(
-            "SELECT COUNT(*) AS cnt FROM reactions WHERE auction_id = ? AND reaction_type = 'like'",
-            (auction_id,)
-        ).fetchone()
-        dislikes_row = db.execute(
-            "SELECT COUNT(*) AS cnt FROM reactions WHERE auction_id = ? AND reaction_type = 'dislike'",
-            (auction_id,)
-        ).fetchone()
-
-        likes = likes_row["cnt"] if likes_row else 0
-        dislikes = dislikes_row["cnt"] if dislikes_row else 0
-        return likes, dislikes
-
-    def add_reaction(self, auction_id, reaction_type):
-        db = get_db()
-        now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
-        db.execute(
-            """
-            INSERT INTO reactions (auction_id, reaction_type, created_at)
-            VALUES (?, ?, ?)
-            """,
-            (auction_id, reaction_type, now_str)
-        )
-        db.commit()
