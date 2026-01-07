@@ -68,13 +68,19 @@ def auction_list():
 @auctions_bp.route("/auctions/<int:auction_id>")
 def auction_detail(auction_id):
     auction = repo.get_by_id(auction_id)
-
     if auction is None:
         abort(404)
 
     top_bids = repo.get_top_bids(auction_id)
+    likes, dislikes = repo.get_reaction_counts(auction_id)
 
-    return render_template("auctions/detail.html", auction=auction, top_bids=top_bids)
+    return render_template(
+        "auctions/detail.html",
+        auction=auction,
+        top_bids=top_bids,
+        likes=likes,
+        dislikes=dislikes
+    )
 
 @auctions_bp.route("/auctions/<int:auction_id>/bid", methods=["POST"])
 def place_bid(auction_id):
@@ -99,5 +105,21 @@ def place_bid(auction_id):
     repo.add_bid(auction_id, bidder_email, bid_amount)
     flash("Your bid was placed!")
     return redirect(url_for("auctions.auction_detail", auction_id=auction_id))
+
+@auctions_bp.route("/auctions/<int:auction_id>/react", methods=["POST"])
+def react(auction_id):
+    auction = repo.get_by_id(auction_id)
+    if auction is None:
+        abort(404)
+
+    reaction_type = request.form.get("reaction_type", "")
+    if reaction_type not in ["like", "dislike"]:
+        flash("Invalid reaction.")
+        return redirect(url_for("auctions.auction_detail", auction_id=auction_id))
+
+    repo.add_reaction(auction_id, reaction_type)
+    flash("Thanks for your feedback!")
+    return redirect(url_for("auctions.auction_detail", auction_id=auction_id))
+
 
 

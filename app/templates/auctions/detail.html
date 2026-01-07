@@ -1,6 +1,23 @@
 {% extends "base.html" %} {% block content %}
 <h2>{{ auction.title }}</h2>
 
+<p>
+    <strong>Likes:</strong> {{ likes }} |
+    <strong>Dislikes:</strong> {{ dislikes }}
+</p>
+
+<form method="post" action="{{ url_for('auctions.react', auction_id=auction.id) }}" style="display:inline;">
+    <input type="hidden" name="reaction_type" value="like">
+    <button type="submit">Like</button>
+</form>
+
+<form method="post" action="{{ url_for('auctions.react', auction_id=auction.id) }}" style="display:inline;">
+    <input type="hidden" name="reaction_type" value="dislike">
+    <button type="submit">Dislike</button>
+</form>
+
+<hr>
+
 <p><strong>Category:</strong> {{ auction.category }}</p>
 <p><strong>Description:</strong> {{ auction.description }}</p>
 <p><strong>Starting bid:</strong> {{ auction.starting_bid }} SEK</p>

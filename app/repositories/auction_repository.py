@@ -150,3 +150,30 @@ class AuctionRepository:
 
         rows = db.execute(sql, tuple(params)).fetchall()
         return rows
+
+    def get_reaction_counts(self, auction_id):
+        db = get_db()
+        likes_row = db.execute(
+            "SELECT COUNT(*) AS cnt FROM reactions WHERE auction_id = ? AND reaction_type = 'like'",
+            (auction_id,)
+        ).fetchone()
+        dislikes_row = db.execute(
+            "SELECT COUNT(*) AS cnt FROM reactions WHERE auction_id = ? AND reaction_type = 'dislike'",
+            (auction_id,)
+        ).fetchone()
+
+        likes = likes_row["cnt"] if likes_row else 0
+        dislikes = dislikes_row["cnt"] if dislikes_row else 0
+        return likes, dislikes
+
+    def add_reaction(self, auction_id, reaction_type):
+        db = get_db()
+        now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
+        db.execute(
+            """
+            INSERT INTO reactions (auction_id, reaction_type, created_at)
+            VALUES (?, ?, ?)
+            """,
+            (auction_id, reaction_type, now_str)
+        )
+        db.commit()
