@@ -5,13 +5,14 @@ from app.db import get_db
 class AuctionRepository:
     # -------- Auctions --------
 
-    def get_all(self):
+    def get_all(self, sort="soon"):
         db = get_db()
+        order = "ASC" if sort == "soon" else "DESC"
         rows = db.execute(
-            """
+            f"""
             SELECT id, title, category, description, starting_bid, end_datetime
             FROM auctions
-            ORDER BY end_datetime ASC
+            ORDER BY end_datetime {order}
             """
         ).fetchall()
         return rows
@@ -53,7 +54,6 @@ class AuctionRepository:
 
     def delete_auction(self, auction_id):
         db = get_db()
-        # remove related data first
         db.execute("DELETE FROM bids WHERE auction_id = ?", (auction_id,))
         db.execute("DELETE FROM reactions WHERE auction_id = ?", (auction_id,))
         db.execute("DELETE FROM auctions WHERE id = ?", (auction_id,))
@@ -89,10 +89,7 @@ class AuctionRepository:
 
     def delete_bids_for_auction(self, auction_id):
         db = get_db()
-        db.execute(
-            "DELETE FROM bids WHERE auction_id = ?",
-            (auction_id,)
-        )
+        db.execute("DELETE FROM bids WHERE auction_id = ?", (auction_id,))
         db.commit()
 
     def get_bid_count(self, auction_id):
@@ -134,15 +131,16 @@ class AuctionRepository:
 
     # -------- Search / Filters --------
 
-    def search(self, keyword):
+    def search(self, keyword, sort="soon"):
         db = get_db()
+        order = "ASC" if sort == "soon" else "DESC"
         kw = f"%{keyword}%"
         rows = db.execute(
-            """
+            f"""
             SELECT id, title, category, description, starting_bid, end_datetime
             FROM auctions
             WHERE title LIKE ? OR description LIKE ?
-            ORDER BY end_datetime ASC
+            ORDER BY end_datetime {order}
             """,
             (kw, kw)
         ).fetchall()
@@ -159,8 +157,9 @@ class AuctionRepository:
         ).fetchall()
         return [r["category"] for r in rows]
 
-    def filter_auctions(self, category=None, min_price=None, max_price=None, end_before=None):
+    def filter_auctions(self, category=None, min_price=None, max_price=None, end_before=None, sort="soon"):
         db = get_db()
+        order = "ASC" if sort == "soon" else "DESC"
 
         sql = """
             SELECT id, title, category, description, starting_bid, end_datetime
@@ -185,7 +184,7 @@ class AuctionRepository:
             sql += " AND end_datetime <= ?"
             params.append(end_before)
 
-        sql += " ORDER BY end_datetime ASC"
+        sql += f" ORDER BY end_datetime {order}"
 
         rows = db.execute(sql, tuple(params)).fetchall()
         return rows

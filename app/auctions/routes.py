@@ -9,7 +9,6 @@ repo = AuctionRepository()
 def compute_status(end_datetime_str, bid_count):
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
 
-    # since we store dates like "YYYY-MM-DD HH:MM" this simple string compare works
     if end_datetime_str <= now_str:
         return "Ended"
 
@@ -26,6 +25,10 @@ def auction_list():
     min_price_str = request.args.get("min_price", "").strip()
     max_price_str = request.args.get("max_price", "").strip()
     end_before = request.args.get("end_before", "").strip()
+    sort = request.args.get("sort", "soon").strip()
+
+    if sort not in ["soon", "latest"]:
+        sort = "soon"
 
     min_price = None
     max_price = None
@@ -44,13 +47,13 @@ def auction_list():
 
     categories = repo.get_categories()
 
-    # get auctions (filters and/or search)
     if category or min_price is not None or max_price is not None or end_before:
         auctions_rows = repo.filter_auctions(
             category=category if category else None,
             min_price=min_price,
             max_price=max_price,
-            end_before=end_before if end_before else None
+            end_before=end_before if end_before else None,
+            sort=sort
         )
 
         if q:
@@ -61,11 +64,10 @@ def auction_list():
             ]
     else:
         if q:
-            auctions_rows = repo.search(q)
+            auctions_rows = repo.search(q, sort=sort)
         else:
-            auctions_rows = repo.get_all()
+            auctions_rows = repo.get_all(sort=sort)
 
-    # convert rows -> dict so we can attach "status"
     auctions = []
     for a in auctions_rows:
         a_dict = dict(a)
@@ -81,7 +83,8 @@ def auction_list():
         category=category,
         min_price=min_price_str,
         max_price=max_price_str,
-        end_before=end_before
+        end_before=end_before,
+        sort=sort
     )
 
 

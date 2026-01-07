@@ -18,6 +18,11 @@
 
     <input type="text" name="end_before" placeholder="End before (YYYY-MM-DD HH:MM)" value="{{ end_before }}">
 
+    <select name="sort">
+        <option value="soon" {% if sort == "soon" %}selected{% endif %}>Ending soon</option>
+        <option value="latest" {% if sort == "latest" %}selected{% endif %}>Ending latest</option>
+    </select>
+
     <button type="submit">Apply</button>
     <a href="{{ url_for('auctions.auction_list') }}">Clear</a>
 </form>
