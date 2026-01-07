@@ -71,8 +71,11 @@ def auction_list():
     auctions = []
     for a in auctions_rows:
         a_dict = dict(a)
+
         bid_count = repo.get_bid_count(a_dict["id"])
+        a_dict["bid_count"] = bid_count
         a_dict["status"] = compute_status(a_dict["end_datetime"], bid_count)
+
         auctions.append(a_dict)
 
     return render_template(

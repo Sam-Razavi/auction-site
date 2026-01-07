@@ -38,6 +38,7 @@
                 Starting bid: {{ a.starting_bid }} SEK<br>
                 Ends: {{ a.end_datetime }}<br>
                 <strong>Status:</strong> {{ a.status }}<br>
+                <strong>Bids:</strong> {{ a.bid_count }}<br>
                 <a href="{{ url_for('auctions.auction_detail', auction_id=a.id) }}">View auction</a>
             </li>
             <hr>
