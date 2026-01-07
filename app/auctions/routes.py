@@ -9,13 +9,61 @@ repo = AuctionRepository()
 @auctions_bp.route("/")
 def auction_list():
     q = request.args.get("q", "").strip()
+    category = request.args.get("category", "").strip()
+    min_price_str = request.args.get("min_price", "").strip()
+    max_price_str = request.args.get("max_price", "").strip()
+    end_before = request.args.get("end_before", "").strip()
 
-    if q:
-        auctions = repo.search(q)
+    # convert price inputs (student simple)
+    min_price = None
+    max_price = None
+
+    if min_price_str != "":
+        try:
+            min_price = int(min_price_str)
+        except ValueError:
+            min_price = None
+
+    if max_price_str != "":
+        try:
+            max_price = int(max_price_str)
+        except ValueError:
+            max_price = None
+
+    categories = repo.get_categories()
+
+    # if any filter is used -> filter first
+    if category or min_price is not None or max_price is not None or end_before:
+        auctions = repo.filter_auctions(
+            category=category if category else None,
+            min_price=min_price,
+            max_price=max_price,
+            end_before=end_before if end_before else None
+        )
+
+        # if q is also used, do a simple in-python filter (easy student solution)
+        if q:
+            q_lower = q.lower()
+            auctions = [a for a in auctions if q_lower in a["title"].lower() or q_lower in a["description"].lower()]
+
     else:
-        auctions = repo.get_all()
+        # no filters -> normal search or all
+        if q:
+            auctions = repo.search(q)
+        else:
+            auctions = repo.get_all()
 
-    return render_template("auctions/list.html", auctions=auctions, q=q)
+    return render_template(
+        "auctions/list.html",
+        auctions=auctions,
+        q=q,
+        categories=categories,
+        category=category,
+        min_price=min_price_str,
+        max_price=max_price_str,
+        end_before=end_before
+    )
+
 
 @auctions_bp.route("/auctions/<int:auction_id>")
 def auction_detail(auction_id):

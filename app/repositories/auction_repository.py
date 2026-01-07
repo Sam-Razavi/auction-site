@@ -108,3 +108,45 @@ class AuctionRepository:
             (auction_id,)
         )
         db.commit()
+
+    def get_categories(self):
+        db = get_db()
+        rows = db.execute(
+            """
+            SELECT DISTINCT category
+            FROM auctions
+            ORDER BY category ASC
+            """
+        ).fetchall()
+        return [r["category"] for r in rows]
+
+    def filter_auctions(self, category=None, min_price=None, max_price=None, end_before=None):
+        db = get_db()
+
+        sql = """
+            SELECT id, title, category, description, starting_bid, end_datetime
+            FROM auctions
+            WHERE 1=1
+        """
+        params = []
+
+        if category:
+            sql += " AND category = ?"
+            params.append(category)
+
+        if min_price is not None:
+            sql += " AND starting_bid >= ?"
+            params.append(min_price)
+
+        if max_price is not None:
+            sql += " AND starting_bid <= ?"
+            params.append(max_price)
+
+        if end_before:
+            sql += " AND end_datetime <= ?"
+            params.append(end_before)
+
+        sql += " ORDER BY end_datetime ASC"
+
+        rows = db.execute(sql, tuple(params)).fetchall()
+        return rows
