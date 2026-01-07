@@ -87,3 +87,13 @@ def admin_delete_auction(auction_id):
     repo.delete_auction(auction_id)
     flash("Auction deleted.")
     return redirect(url_for("admin.admin_auctions"))
+
+@admin_bp.route("/admin/auctions/<int:auction_id>/bids/delete", methods=["POST"])
+def admin_delete_bids(auction_id):
+    if not require_admin():
+        return redirect(url_for("admin.login"))
+
+    repo.delete_bids_for_auction(auction_id)
+    flash("All bids for this auction were deleted.")
+    return redirect(url_for("admin.admin_auctions"))
+

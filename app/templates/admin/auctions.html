@@ -1,27 +1,42 @@
-{% extends "base.html" %}
-
-{% block content %}
+{% extends "base.html" %} {% block content %}
 <h2>Manage Auctions</h2>
 
-<p><a href="{{ url_for('admin.admin_create_auction') }}">Create new auction</a></p>
+<p>
+  <a href="{{ url_for('admin.admin_create_auction') }}">Create new auction</a>
+</p>
 
 {% if auctions %}
-    <ul>
-        {% for a in auctions %}
-            <li>
-                <strong>{{ a.title }}</strong> ({{ a.category }}) - ends: {{ a.end_datetime }}
-                <br>
-                <a href="{{ url_for('admin.admin_edit_auction', auction_id=a.id) }}">Edit</a>
+<ul>
+  {% for a in auctions %}
+  <li>
+    <strong>{{ a.title }}</strong> ({{ a.category }}) - ends: {{ a.end_datetime
+    }}
+    <br />
+    <a href="{{ url_for('admin.admin_edit_auction', auction_id=a.id) }}"
+      >Edit</a
+    >
 
-                <form method="post" action="{{ url_for('admin.admin_delete_auction', auction_id=a.id) }}" style="display:inline;">
-                    <button type="submit">Delete</button>
-                </form>
-            </li>
-            <hr>
-        {% endfor %}
-    </ul>
+    <form
+      method="post"
+      action="{{ url_for('admin.admin_delete_auction', auction_id=a.id) }}"
+      style="display: inline"
+    >
+      <button type="submit">Delete</button>
+    </form>
+
+    <form
+      method="post"
+      action="{{ url_for('admin.admin_delete_bids', auction_id=a.id) }}"
+      style="display: inline"
+    >
+      <button type="submit">Delete bids</button>
+    </form>
+  </li>
+  <hr />
+  {% endfor %}
+</ul>
 {% else %}
-    <p>No auctions.</p>
+<p>No auctions.</p>
 {% endif %}
 
 <p><a href="{{ url_for('admin.dashboard') }}">Back to dashboard</a></p>
