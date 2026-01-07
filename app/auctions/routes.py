@@ -8,8 +8,14 @@ repo = AuctionRepository()
 
 @auctions_bp.route("/")
 def auction_list():
-    auctions = repo.get_all()
-    return render_template("auctions/list.html", auctions=auctions)
+    q = request.args.get("q", "").strip()
+
+    if q:
+        auctions = repo.search(q)
+    else:
+        auctions = repo.get_all()
+
+    return render_template("auctions/list.html", auctions=auctions, q=q)
 
 @auctions_bp.route("/auctions/<int:auction_id>")
 def auction_detail(auction_id):

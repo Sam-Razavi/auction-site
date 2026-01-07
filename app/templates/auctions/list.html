@@ -1,6 +1,16 @@
 {% extends "base.html" %} {% block content %}
 <h2>Auctions</h2>
 
+<form method="get" action="{{ url_for('auctions.auction_list') }}">
+    <input type="text" name="q" placeholder="Search..." value="{{ q }}">
+    <button type="submit">Search</button>
+    {% if q %}
+        <a href="{{ url_for('auctions.auction_list') }}">Clear</a>
+    {% endif %}
+</form>
+
+<hr>
+
 {% if auctions %}
 <ul>
   {% for a in auctions %}

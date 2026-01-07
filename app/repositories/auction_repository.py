@@ -16,6 +16,20 @@ class AuctionRepository:
         ).fetchall()
         return rows
 
+    def search(self, keyword):
+        db = get_db()
+        kw = f"%{keyword}%"
+        rows = db.execute(
+            """
+            SELECT id, title, category, description, starting_bid, end_datetime
+            FROM auctions
+            WHERE title LIKE ? OR description LIKE ?
+            ORDER BY end_datetime ASC
+            """,
+            (kw, kw)
+        ).fetchall()
+        return rows
+
     def get_by_id(self, auction_id):
         db = get_db()
         row = db.execute(
