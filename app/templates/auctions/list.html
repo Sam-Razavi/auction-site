@@ -1,51 +1,88 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Auctions</h2>
+<div class="card card-pad">
+  <h2 style="margin: 0 0 10px 0;">Auctions</h2>
+  <p class="muted" style="margin: 0 0 14px 0;">Search, filter, and sort auctions.</p>
 
-<form method="get" action="{{ url_for('auctions.auction_list') }}">
-    <input type="text" name="q" placeholder="Search..." value="{{ q }}">
+  <form class="form" method="get" action="{{ url_for('auctions.auction_list') }}">
+      <div class="grid grid-2">
+          <input class="input" type="text" name="q" placeholder="Search..." value="{{ q }}">
 
-    <select name="category">
-        <option value="">All categories</option>
-        {% for c in categories %}
-            <option value="{{ c }}" {% if c == category %}selected{% endif %}>{{ c }}</option>
-        {% endfor %}
-    </select>
+          <select name="sort">
+              <option value="soon" {% if sort == "soon" %}selected{% endif %}>Ending soon</option>
+              <option value="latest" {% if sort == "latest" %}selected{% endif %}>Ending latest</option>
+          </select>
 
-    <input type="number" name="min_price" placeholder="Min price" value="{{ min_price }}">
-    <input type="number" name="max_price" placeholder="Max price" value="{{ max_price }}">
+          <select name="category">
+              <option value="">All categories</option>
+              {% for c in categories %}
+                  <option value="{{ c }}" {% if c == category %}selected{% endif %}>{{ c }}</option>
+              {% endfor %}
+          </select>
 
-    <input type="text" name="end_before" placeholder="End before (YYYY-MM-DD HH:MM)" value="{{ end_before }}">
+          <input class="input" type="text" name="end_before" placeholder="End before (YYYY-MM-DD HH:MM)" value="{{ end_before }}">
+      </div>
 
-    <select name="sort">
-        <option value="soon" {% if sort == "soon" %}selected{% endif %}>Ending soon</option>
-        <option value="latest" {% if sort == "latest" %}selected{% endif %}>Ending latest</option>
-    </select>
+      <div class="grid grid-2">
+          <input class="input" type="number" name="min_price" placeholder="Min price" value="{{ min_price }}">
+          <input class="input" type="number" name="max_price" placeholder="Max price" value="{{ max_price }}">
+      </div>
 
-    <button type="submit">Apply</button>
-    <a href="{{ url_for('auctions.auction_list') }}">Clear</a>
-</form>
+      <div class="actions">
+          <button class="btn primary" type="submit">Apply</button>
+          <a class="btn" href="{{ url_for('auctions.auction_list') }}">Clear</a>
+      </div>
+  </form>
+</div>
 
-<hr>
+<div class="hr"></div>
 
 {% if auctions %}
-    <ul>
-        {% for a in auctions %}
-            <li>
-                <strong>{{ a.title }}</strong><br>
-                Category: {{ a.category }}<br>
-                Starting bid: {{ a.starting_bid }} SEK<br>
-                Ends: {{ a.end_datetime }}<br>
-                <strong>Status:</strong> {{ a.status }}<br>
-                <strong>Bids:</strong> {{ a.bid_count }}<br>
-                <a href="{{ url_for('auctions.auction_detail', auction_id=a.id) }}">View auction</a>
-            </li>
-            <hr>
-        {% endfor %}
-    </ul>
+  <div class="grid">
+    {% for a in auctions %}
+      <div class="card card-pad">
+        <div class="actions" style="justify-content: space-between;">
+          <div>
+            <div style="font-size: 18px; font-weight: 700;">{{ a.title }}</div>
+            <div class="small">Category: {{ a.category }}</div>
+          </div>
+
+          {% if a.status == "Ongoing" %}
+            <span class="badge ok">Ongoing</span>
+          {% elif a.status == "Upcoming" %}
+            <span class="badge warn">Upcoming</span>
+          {% else %}
+            <span class="badge end">Ended</span>
+          {% endif %}
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="grid grid-2">
+          <div>
+            <div class="small">Starting bid</div>
+            <div style="font-weight: 700;">{{ a.starting_bid }} SEK</div>
+          </div>
+          <div>
+            <div class="small">Ends</div>
+            <div style="font-weight: 700;">{{ a.end_datetime }}</div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="actions" style="justify-content: space-between;">
+          <div class="small">Bids: {{ a.bid_count }}</div>
+          <a class="btn primary" href="{{ url_for('auctions.auction_detail', auction_id=a.id) }}">View</a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
 {% else %}
+  <div class="card card-pad">
     <p>No auctions found.</p>
+  </div>
 {% endif %}
 
 {% endblock %}

@@ -1,19 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Auction Site</title>
-  </head>
-  <body>
-    <h1>Auction Site</h1>
-    <hr />
-    {% with messages = get_flashed_messages() %} {% if messages %}
-    <ul>
-      {% for message in messages %}
-      <li>{{ message }}</li>
-      {% endfor %}
-    </ul>
-    <hr />
-    {% endif %} {% endwith %} {% block content %}{% endblock %}
-  </body>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="navbar">
+    <div class="nav-inner">
+        <div class="brand">
+            <a href="{{ url_for('auctions.auction_list') }}">Auction Site</a>
+        </div>
+
+        <div class="nav-links">
+            <a class="badge" href="{{ url_for('auctions.auction_list') }}">Browse</a>
+            <a class="badge" href="{{ url_for('admin.dashboard') }}">Admin</a>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash">
+          {% for message in messages %}
+            <div>{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+
+</div>
+
+</body>
 </html>
