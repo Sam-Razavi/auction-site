@@ -1,26 +1,32 @@
-{% extends "base.html" %}
-
-{% block page_title %}
-Auction details • {{ auction.title }}
-{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block page_title %} Auction details • {{
+auction.title }} {% endblock %} {% block content %}
 <div class="grid grid-2">
   <div class="card card-pad">
-    <div class="actions" style="justify-content: space-between;">
-      <h2 style="margin: 0;">{{ auction.title }}</h2>
+    <div class="actions" style="justify-content: space-between">
+      <h2 style="margin: 0">{{ auction.title }}</h2>
 
       {% if auction.status == "Ongoing" %}
-        <span class="badge ok">Ongoing</span>
+      <span class="badge ok">Ongoing</span>
       {% elif auction.status == "Upcoming" %}
-        <span class="badge warn">Upcoming</span>
+      <span class="badge warn">Upcoming</span>
       {% else %}
-        <span class="badge end">Ended</span>
+      <span class="badge end">Ended</span>
       {% endif %}
     </div>
 
-    <p class="muted" style="margin-top: 8px;">Category: {{ auction.category }}</p>
+    <p class="muted" style="margin-top: 8px">
+      Category: {{ auction.category }}
+    </p>
     <div class="hr"></div>
+
+    {% if auction.image_filename %}
+    <img
+      class="auction-hero"
+      src="{{ url_for('static', filename='images/' ~ auction.image_filename) }}"
+      alt="{{ auction.title }}"
+    />
+    <div class="hr"></div>
+    {% endif %}
 
     <p>{{ auction.description }}</p>
 
@@ -29,11 +35,11 @@ Auction details • {{ auction.title }}
     <div class="grid grid-2">
       <div>
         <div class="small">Starting bid</div>
-        <div style="font-weight: 700;">{{ auction.starting_bid }} SEK</div>
+        <div style="font-weight: 700">{{ auction.starting_bid }} SEK</div>
       </div>
       <div>
         <div class="small">Ends</div>
-        <div style="font-weight: 700;">{{ auction.end_datetime }}</div>
+        <div style="font-weight: 700">{{ auction.end_datetime }}</div>
       </div>
     </div>
 
@@ -43,13 +49,19 @@ Auction details • {{ auction.title }}
       <div class="badge">Likes: {{ likes }}</div>
       <div class="badge">Dislikes: {{ dislikes }}</div>
 
-      <form method="post" action="{{ url_for('auctions.react', auction_id=auction.id) }}">
-        <input type="hidden" name="reaction_type" value="like">
+      <form
+        method="post"
+        action="{{ url_for('auctions.react', auction_id=auction.id) }}"
+      >
+        <input type="hidden" name="reaction_type" value="like" />
         <button class="btn" type="submit">Like</button>
       </form>
 
-      <form method="post" action="{{ url_for('auctions.react', auction_id=auction.id) }}">
-        <input type="hidden" name="reaction_type" value="dislike">
+      <form
+        method="post"
+        action="{{ url_for('auctions.react', auction_id=auction.id) }}"
+      >
+        <input type="hidden" name="reaction_type" value="dislike" />
         <button class="btn" type="submit">Dislike</button>
       </form>
     </div>
@@ -61,17 +73,21 @@ Auction details • {{ auction.title }}
 
   <div class="grid">
     <div class="card card-pad">
-      <h3 style="margin-top: 0;">Place a bid</h3>
+      <h3 style="margin-top: 0">Place a bid</h3>
 
-      <form class="form" method="post" action="{{ url_for('auctions.place_bid', auction_id=auction.id) }}">
+      <form
+        class="form"
+        method="post"
+        action="{{ url_for('auctions.place_bid', auction_id=auction.id) }}"
+      >
         <div>
           <label class="small">Email</label>
-          <input class="input" type="email" name="bidder_email" required>
+          <input class="input" type="email" name="bidder_email" required />
         </div>
 
         <div>
           <label class="small">Bid amount (SEK)</label>
-          <input class="input" type="number" name="bid_amount" required>
+          <input class="input" type="number" name="bid_amount" required />
         </div>
 
         <button class="btn primary" type="submit">Place bid</button>
@@ -79,19 +95,21 @@ Auction details • {{ auction.title }}
     </div>
 
     <div class="card card-pad">
-      <h3 style="margin-top: 0;">Top bids</h3>
+      <h3 style="margin-top: 0">Top bids</h3>
 
       {% if top_bids and top_bids|length > 0 %}
-        <ol>
-          {% for b in top_bids %}
-            <li>
-              <strong>{{ b.bid_amount }} SEK</strong>
-              <span class="small">— {{ b.bidder_email }} ({{ b.bid_datetime }})</span>
-            </li>
-          {% endfor %}
-        </ol>
+      <ol>
+        {% for b in top_bids %}
+        <li>
+          <strong>{{ b.bid_amount }} SEK</strong>
+          <span class="small"
+            >— {{ b.bidder_email }} ({{ b.bid_datetime }})</span
+          >
+        </li>
+        {% endfor %}
+      </ol>
       {% else %}
-        <p class="muted">No bids yet.</p>
+      <p class="muted">No bids yet.</p>
       {% endif %}
     </div>
   </div>

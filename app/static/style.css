@@ -220,3 +220,21 @@ li {
 }
 .footer a { color: var(--muted); }
 .footer a:hover { color: var(--text); text-decoration: none; }
+
+.auction-thumb {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.03);
+}
+
+.auction-hero {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.03);
+}

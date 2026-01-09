@@ -10,7 +10,7 @@ class AuctionRepository:
         order = "ASC" if sort == "soon" else "DESC"
         rows = db.execute(
             f"""
-            SELECT id, title, category, description, starting_bid, end_datetime
+            SELECT id, title, category, description, starting_bid, end_datetime, image_filename
             FROM auctions
             ORDER BY end_datetime {order}
             """
@@ -21,7 +21,7 @@ class AuctionRepository:
         db = get_db()
         row = db.execute(
             """
-            SELECT id, title, category, description, starting_bid, end_datetime
+            SELECT id, title, category, description, starting_bid, end_datetime, image_filename
             FROM auctions
             WHERE id = ?
             """,
@@ -137,7 +137,7 @@ class AuctionRepository:
         kw = f"%{keyword}%"
         rows = db.execute(
             f"""
-            SELECT id, title, category, description, starting_bid, end_datetime
+            SELECT id, title, category, description, starting_bid, end_datetime, image_filename
             FROM auctions
             WHERE title LIKE ? OR description LIKE ?
             ORDER BY end_datetime {order}
@@ -162,7 +162,7 @@ class AuctionRepository:
         order = "ASC" if sort == "soon" else "DESC"
 
         sql = """
-            SELECT id, title, category, description, starting_bid, end_datetime
+            SELECT id, title, category, description, starting_bid, end_datetime, image_filename
             FROM auctions
             WHERE 1=1
         """
