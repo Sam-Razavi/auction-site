@@ -1,62 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Auction Site</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    {% set path = request.path %}
 
-{% set path = request.path %}
-
-<div class="page">
-
-  <div class="navbar">
-      <div class="nav-inner">
+    <div class="page">
+      <div class="navbar">
+        <div class="nav-inner">
           <div class="brand">
-              <a href="{{ url_for('auctions.auction_list') }}">Auction Site</a>
+            <a href="{{ url_for('auctions.auction_list') }}" class="brand-link">
+              <img
+                src="{{ url_for('static', filename='images/logo.png') }}"
+                alt="Auction Site"
+                class="logo"
+              />
+            </a>
           </div>
 
           <div class="nav-links">
-              <a class="nav-pill {% if path == '/' %}active{% endif %}" href="{{ url_for('auctions.auction_list') }}">Browse</a>
-              <a class="nav-pill {% if path.startswith('/admin') %}active{% endif %}" href="{{ url_for('admin.dashboard') }}">Admin</a>
+            <a
+              class="nav-pill {% if path == '/' %}active{% endif %}"
+              href="{{ url_for('auctions.auction_list') }}"
+              >Browse</a
+            >
+            <a
+              class="nav-pill {% if path.startswith('/admin') %}active{% endif %}"
+              href="{{ url_for('admin.dashboard') }}"
+              >Admin</a
+            >
           </div>
+        </div>
       </div>
-  </div>
 
-  <main class="content">
-      <div class="container">
-
-          {% with messages = get_flashed_messages() %}
-            {% if messages %}
-              <div class="flash">
-                {% for message in messages %}
-                  <div>{{ message }}</div>
-                {% endfor %}
-              </div>
-            {% endif %}
-          {% endwith %}
-
-          <div class="page-title">
-              {% block page_title %}{% endblock %}
+      <main class="content">
+        <div class="container">
+          {% with messages = get_flashed_messages() %} {% if messages %}
+          <div class="flash">
+            {% for message in messages %}
+            <div>{{ message }}</div>
+            {% endfor %}
           </div>
+          {% endif %} {% endwith %}
+
+          <div class="page-title">{% block page_title %}{% endblock %}</div>
 
           {% block content %}{% endblock %}
+        </div>
+      </main>
 
-      </div>
-  </main>
-
-  <footer class="footer">
-      <div>© 2026 Auction Site • Student project • GIK376</div>
-      <div class="actions">
+      <footer class="footer">
+        <div>© 2026 Auction Site • Student project • GIK376</div>
+        <div class="actions">
           <a href="{{ url_for('auctions.auction_list') }}">Home</a>
           <a href="{{ url_for('admin.dashboard') }}">Admin</a>
-      </div>
-  </footer>
-
-</div>
-
-</body>
-
+        </div>
+      </footer>
+    </div>
+  </body>
 </html>

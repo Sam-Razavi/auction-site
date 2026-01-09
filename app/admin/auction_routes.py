@@ -32,6 +32,7 @@ def admin_create_auction():
         description = request.form.get("description", "").strip()
         starting_bid = request.form.get("starting_bid", "").strip()
         end_datetime = request.form.get("end_datetime", "").strip()
+        end_datetime = end_datetime.replace("T", " ")
         image_filename = request.form.get("image_filename", "").strip()
 
         if title == "" or category == "" or description == "" or starting_bid == "" or end_datetime == "":
@@ -71,6 +72,7 @@ def admin_edit_auction(auction_id):
         description = request.form.get("description", "").strip()
         starting_bid = request.form.get("starting_bid", "").strip()
         end_datetime = request.form.get("end_datetime", "").strip()
+        end_datetime = end_datetime.replace("T", " ")
         image_filename = request.form.get("image_filename", "").strip()
 
         if title == "" or category == "" or description == "" or starting_bid == "" or end_datetime == "":

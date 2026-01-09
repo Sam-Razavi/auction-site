@@ -37,8 +37,19 @@
       </div>
 
       <div>
-        <label class="small">End datetime (YYYY-MM-DD HH:MM)</label>
-        <input class="input" type="text" name="end_datetime" value="{{ auction.end_datetime if auction else '' }}" required>
+        <label class="small">End date & time</label>
+
+        {# convert "YYYY-MM-DD HH:MM" -> "YYYY-MM-DDTHH:MM" for the input #}
+        {% set dt_value = "" %}
+        {% if auction and auction.end_datetime %}
+          {% set dt_value = auction.end_datetime.replace(" ", "T") %}
+        {% endif %}
+
+        <input class="input" type="datetime-local" name="end_datetime" value="{{ dt_value }}" required>
+
+        <div class="small" style="margin-top: 6px;">
+          Choose a date and time (no manual typing needed).
+        </div>
       </div>
     </div>
 

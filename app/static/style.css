@@ -21,7 +21,7 @@ body {
   color: var(--text);
 }
 
-/* Sticky footer layout */
+/*  footer layout */
 .page {
   min-height: 100vh;
   display: flex;
@@ -195,7 +195,7 @@ textarea { resize: vertical; }
   color: var(--muted);
 }
 
-/* Better spacing for ordered lists (Top bids) */
+/* spacing for ordered lists */
 ol {
   margin: 10px 0 0 18px;
   padding: 0;
@@ -237,4 +237,17 @@ li {
   border-radius: 14px;
   border: 1px solid var(--border);
   background: rgba(255,255,255,0.03);
+}
+
+/* Logo */
+.brand-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  height: 70px;
+  width: auto;
+  display: block;
 }
