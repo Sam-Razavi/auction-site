@@ -4,11 +4,13 @@ from app.repositories.auction_repository import AuctionRepository
 
 repo = AuctionRepository()
 
+
 def require_admin():
     if not session.get("is_admin"):
         flash("You need to login as admin.")
         return False
     return True
+
 
 @admin_bp.route("/admin/auctions")
 def admin_auctions():
@@ -17,6 +19,7 @@ def admin_auctions():
 
     auctions = repo.get_all()
     return render_template("admin/auctions.html", auctions=auctions)
+
 
 @admin_bp.route("/admin/auctions/create", methods=["GET", "POST"])
 def admin_create_auction():
@@ -29,9 +32,10 @@ def admin_create_auction():
         description = request.form.get("description", "").strip()
         starting_bid = request.form.get("starting_bid", "").strip()
         end_datetime = request.form.get("end_datetime", "").strip()
+        image_filename = request.form.get("image_filename", "").strip()
 
         if title == "" or category == "" or description == "" or starting_bid == "" or end_datetime == "":
-            flash("Please fill in all fields.")
+            flash("Please fill in all fields (image is optional).")
             return render_template("admin/auction_form.html", auction=None)
 
         try:
@@ -40,11 +44,16 @@ def admin_create_auction():
             flash("Starting bid must be a number.")
             return render_template("admin/auction_form.html", auction=None)
 
-        repo.create_auction(title, category, description, starting_bid_int, end_datetime)
+        # allow empty image field
+        if image_filename == "":
+            image_filename = None
+
+        repo.create_auction(title, category, description, starting_bid_int, end_datetime, image_filename)
         flash("Auction created.")
         return redirect(url_for("admin.admin_auctions"))
 
     return render_template("admin/auction_form.html", auction=None)
+
 
 @admin_bp.route("/admin/auctions/<int:auction_id>/edit", methods=["GET", "POST"])
 def admin_edit_auction(auction_id):
@@ -62,9 +71,10 @@ def admin_edit_auction(auction_id):
         description = request.form.get("description", "").strip()
         starting_bid = request.form.get("starting_bid", "").strip()
         end_datetime = request.form.get("end_datetime", "").strip()
+        image_filename = request.form.get("image_filename", "").strip()
 
         if title == "" or category == "" or description == "" or starting_bid == "" or end_datetime == "":
-            flash("Please fill in all fields.")
+            flash("Please fill in all fields (image is optional).")
             return render_template("admin/auction_form.html", auction=auction)
 
         try:
@@ -73,11 +83,15 @@ def admin_edit_auction(auction_id):
             flash("Starting bid must be a number.")
             return render_template("admin/auction_form.html", auction=auction)
 
-        repo.update_auction(auction_id, title, category, description, starting_bid_int, end_datetime)
+        if image_filename == "":
+            image_filename = None
+
+        repo.update_auction(auction_id, title, category, description, starting_bid_int, end_datetime, image_filename)
         flash("Auction updated.")
         return redirect(url_for("admin.admin_auctions"))
 
     return render_template("admin/auction_form.html", auction=auction)
+
 
 @admin_bp.route("/admin/auctions/<int:auction_id>/delete", methods=["POST"])
 def admin_delete_auction(auction_id):
@@ -88,6 +102,7 @@ def admin_delete_auction(auction_id):
     flash("Auction deleted.")
     return redirect(url_for("admin.admin_auctions"))
 
+
 @admin_bp.route("/admin/auctions/<int:auction_id>/bids/delete", methods=["POST"])
 def admin_delete_bids(auction_id):
     if not require_admin():
@@ -96,4 +111,3 @@ def admin_delete_bids(auction_id):
     repo.delete_bids_for_auction(auction_id)
     flash("All bids for this auction were deleted.")
     return redirect(url_for("admin.admin_auctions"))
-

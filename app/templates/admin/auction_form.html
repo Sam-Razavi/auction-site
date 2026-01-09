@@ -42,6 +42,15 @@
       </div>
     </div>
 
+    <div>
+      <label class="small">Image filename (optional)</label>
+      <input class="input" type="text" name="image_filename" placeholder="example: camera.jpg"
+             value="{{ auction.image_filename if auction and auction.image_filename else '' }}">
+      <div class="small" style="margin-top: 6px;">
+        Put image files in <strong>app/static/images/</strong>. Example: <code>camera.jpg</code>
+      </div>
+    </div>
+
     <div class="actions">
       <button class="btn primary" type="submit">Save</button>
       <a class="btn" href="{{ url_for('admin.admin_auctions') }}">Cancel</a>

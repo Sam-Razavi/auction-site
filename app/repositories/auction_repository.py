@@ -29,26 +29,26 @@ class AuctionRepository:
         ).fetchone()
         return row
 
-    def create_auction(self, title, category, description, starting_bid, end_datetime):
+    def create_auction(self, title, category, description, starting_bid, end_datetime, image_filename):
         db = get_db()
         db.execute(
             """
-            INSERT INTO auctions (title, category, description, starting_bid, end_datetime)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO auctions (title, category, description, starting_bid, end_datetime, image_filename)
+            VALUES (?, ?, ?, ?, ?, ?)
             """,
-            (title, category, description, starting_bid, end_datetime)
+            (title, category, description, starting_bid, end_datetime, image_filename)
         )
         db.commit()
 
-    def update_auction(self, auction_id, title, category, description, starting_bid, end_datetime):
+    def update_auction(self, auction_id, title, category, description, starting_bid, end_datetime, image_filename):
         db = get_db()
         db.execute(
             """
             UPDATE auctions
-            SET title = ?, category = ?, description = ?, starting_bid = ?, end_datetime = ?
+            SET title = ?, category = ?, description = ?, starting_bid = ?, end_datetime = ?, image_filename = ?
             WHERE id = ?
             """,
-            (title, category, description, starting_bid, end_datetime, auction_id)
+            (title, category, description, starting_bid, end_datetime, image_filename, auction_id)
         )
         db.commit()
 
