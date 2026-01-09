@@ -251,3 +251,14 @@ li {
   width: auto;
   display: block;
 }
+
+/* Fix dropdown visibility on dark background */
+select {
+  background-color: #0f1729;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+option {
+  background-color: #0f1729;
+  color: rgba(255, 255, 255, 0.92);
+}
