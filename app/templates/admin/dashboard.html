@@ -1,13 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Admin Dashboard</h2>
+<div class="card card-pad">
+  <h2 style="margin-top: 0;">Admin Dashboard</h2>
+  <p class="muted">Manage auctions and bids.</p>
 
-<p>You are logged in as admin.</p>
+  <div class="hr"></div>
 
-<ul>
-    <li><a href="{{ url_for('admin.admin_auctions') }}">Manage auctions</a></li>
-    <li><a href="{{ url_for('admin.logout') }}">Logout</a></li>
-</ul>
-
+  <div class="actions">
+    <a class="btn primary" href="{{ url_for('admin.admin_auctions') }}">Manage auctions</a>
+    <a class="btn" href="{{ url_for('auctions.auction_list') }}">View site</a>
+    <a class="btn danger" href="{{ url_for('admin.logout') }}">Logout</a>
+  </div>
+</div>
 {% endblock %}

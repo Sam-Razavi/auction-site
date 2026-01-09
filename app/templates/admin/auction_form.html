@@ -1,30 +1,51 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% if auction %}
-    <h2>Edit auction</h2>
-{% else %}
-    <h2>Create auction</h2>
-{% endif %}
+<div class="card card-pad">
+  {% if auction %}
+    <h2 style="margin-top: 0;">Edit auction</h2>
+    <p class="muted">Update the auction information.</p>
+  {% else %}
+    <h2 style="margin-top: 0;">Create auction</h2>
+    <p class="muted">Add a new auction to the site.</p>
+  {% endif %}
 
-<form method="post">
-    <label>Title:</label><br>
-    <input type="text" name="title" value="{{ auction.title if auction else '' }}"><br><br>
+  <div class="hr"></div>
 
-    <label>Category:</label><br>
-    <input type="text" name="category" value="{{ auction.category if auction else '' }}"><br><br>
+  <form class="form" method="post">
+    <div class="grid grid-2">
+      <div>
+        <label class="small">Title</label>
+        <input class="input" type="text" name="title" value="{{ auction.title if auction else '' }}" required>
+      </div>
 
-    <label>Description:</label><br>
-    <textarea name="description" rows="4" cols="40">{{ auction.description if auction else '' }}</textarea><br><br>
+      <div>
+        <label class="small">Category</label>
+        <input class="input" type="text" name="category" value="{{ auction.category if auction else '' }}" required>
+      </div>
+    </div>
 
-    <label>Starting bid (SEK):</label><br>
-    <input type="number" name="starting_bid" value="{{ auction.starting_bid if auction else '' }}"><br><br>
+    <div>
+      <label class="small">Description</label>
+      <textarea class="input" name="description" rows="5" required>{{ auction.description if auction else '' }}</textarea>
+    </div>
 
-    <label>End datetime (YYYY-MM-DD HH:MM):</label><br>
-    <input type="text" name="end_datetime" value="{{ auction.end_datetime if auction else '' }}"><br><br>
+    <div class="grid grid-2">
+      <div>
+        <label class="small">Starting bid (SEK)</label>
+        <input class="input" type="number" name="starting_bid" value="{{ auction.starting_bid if auction else '' }}" required>
+      </div>
 
-    <button type="submit">Save</button>
-</form>
+      <div>
+        <label class="small">End datetime (YYYY-MM-DD HH:MM)</label>
+        <input class="input" type="text" name="end_datetime" value="{{ auction.end_datetime if auction else '' }}" required>
+      </div>
+    </div>
 
-<p><a href="{{ url_for('admin.admin_auctions') }}">Back</a></p>
+    <div class="actions">
+      <button class="btn primary" type="submit">Save</button>
+      <a class="btn" href="{{ url_for('admin.admin_auctions') }}">Cancel</a>
+    </div>
+  </form>
+</div>
 {% endblock %}

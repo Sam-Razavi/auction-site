@@ -1,43 +1,51 @@
-{% extends "base.html" %} {% block content %}
-<h2>Manage Auctions</h2>
+{% extends "base.html" %}
 
-<p>
-  <a href="{{ url_for('admin.admin_create_auction') }}">Create new auction</a>
-</p>
+{% block content %}
+<div class="card card-pad">
+  <div class="actions" style="justify-content: space-between;">
+    <div>
+      <h2 style="margin: 0;">Manage Auctions</h2>
+      <p class="muted" style="margin: 6px 0 0 0;">Create, edit, and remove auctions.</p>
+    </div>
+
+    <div class="actions">
+      <a class="btn primary" href="{{ url_for('admin.admin_create_auction') }}">Create auction</a>
+      <a class="btn" href="{{ url_for('admin.dashboard') }}">Back</a>
+    </div>
+  </div>
+</div>
+
+<div class="hr"></div>
 
 {% if auctions %}
-<ul>
-  {% for a in auctions %}
-  <li>
-    <strong>{{ a.title }}</strong> ({{ a.category }}) - ends: {{ a.end_datetime
-    }}
-    <br />
-    <a href="{{ url_for('admin.admin_edit_auction', auction_id=a.id) }}"
-      >Edit</a
-    >
+  <div class="grid">
+    {% for a in auctions %}
+      <div class="card card-pad">
+        <div class="actions" style="justify-content: space-between;">
+          <div>
+            <div style="font-size: 18px; font-weight: 700;">{{ a.title }}</div>
+            <div class="small">Category: {{ a.category }} · Ends: {{ a.end_datetime }}</div>
+          </div>
 
-    <form
-      method="post"
-      action="{{ url_for('admin.admin_delete_auction', auction_id=a.id) }}"
-      style="display: inline"
-    >
-      <button type="submit">Delete</button>
-    </form>
+          <div class="actions">
+            <a class="btn" href="{{ url_for('admin.admin_edit_auction', auction_id=a.id) }}">Edit</a>
 
-    <form
-      method="post"
-      action="{{ url_for('admin.admin_delete_bids', auction_id=a.id) }}"
-      style="display: inline"
-    >
-      <button type="submit">Delete bids</button>
-    </form>
-  </li>
-  <hr />
-  {% endfor %}
-</ul>
+            <form method="post" action="{{ url_for('admin.admin_delete_bids', auction_id=a.id) }}" style="display:inline;">
+              <button class="btn" type="submit">Delete bids</button>
+            </form>
+
+            <form method="post" action="{{ url_for('admin.admin_delete_auction', auction_id=a.id) }}" style="display:inline;">
+              <button class="btn danger" type="submit">Delete auction</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
 {% else %}
-<p>No auctions.</p>
+  <div class="card card-pad">
+    <p>No auctions.</p>
+  </div>
 {% endif %}
 
-<p><a href="{{ url_for('admin.dashboard') }}">Back to dashboard</a></p>
 {% endblock %}

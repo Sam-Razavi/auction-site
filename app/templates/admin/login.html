@@ -1,11 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Admin Login</h2>
+<div class="container" style="padding: 0;">
+  <div class="card card-pad" style="max-width: 520px; margin: 40px auto;">
+    <h2 style="margin-top: 0;">Admin Login</h2>
+    <p class="muted">Enter the admin password to manage auctions.</p>
 
-<form method="post">
-    <label>Password:</label><br>
-    <input type="password" name="password"><br><br>
-    <button type="submit">Login</button>
-</form>
+    <div class="hr"></div>
+
+    <form class="form" method="post">
+      <div>
+        <label class="small">Password</label>
+        <input class="input" type="password" name="password" required>
+      </div>
+
+      <div class="actions">
+        <button class="btn primary" type="submit">Login</button>
+        <a class="btn" href="{{ url_for('auctions.auction_list') }}">Back</a>
+      </div>
+    </form>
+  </div>
+</div>
 {% endblock %}
