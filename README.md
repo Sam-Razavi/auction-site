@@ -1,69 +1,79 @@
 # Auction Site – Flask Web Application
 
-Detta projekt är en enkel auktionswebbplats byggd med **Flask** som en del av kursen  
-**Applikationsutveckling för webben**.
+A simple auction web application built with **Flask**, created as part of the course **Application Development for the Web**.
 
-Applikationen låter användare se auktioner, söka och filtrera, lägga bud samt interagera med auktioner.  
-Administratörer kan logga in och hantera auktioner och bud via ett admin-gränssnitt.
+Users can browse, search, and bid on auctions. Administrators can manage auctions and bids through a dedicated admin panel.
 
 ---
 
-## Funktionalitet
+## Features
 
-### För användare
-- Visa alla auktioner
-- Se auktion i detalj
-- Lägga bud på auktioner
-- Visa de högsta buden
-- Söka och filtrera auktioner
-- Sortera auktioner (t.ex. slutar snart)
-- Se auktionens status (kommande / pågående / avslutad)
-- Gilla och ogilla auktioner
-- Visa bilder kopplade till auktioner
+### Users
+- Browse all auctions
+- View auction details
+- Place bids
+- See the highest bids
+- Search and filter auctions
+- Sort auctions (e.g. ending soon)
+- View auction status (upcoming / active / ended)
+- Like and dislike auctions
+- View images associated with auctions
 
-### För administratör
-- Logga in via admin-panel
-- Skapa nya auktioner
-- Redigera befintliga auktioner
-- Ta bort auktioner
-- Ta bort bud
-- Ange bildfil för auktioner
-
----
-
-## Tekniker
-
-- Python
-- Flask
-- SQLite
-- HTML / CSS
-- Jinja2 templates
+### Administrators
+- Log in via the admin panel
+- Create new auctions
+- Edit existing auctions
+- Delete auctions and bids
+- Attach images to auctions
 
 ---
 
+## Tech Stack
 
-## Installation (lokalt)
+| Layer | Technology |
+|-------|------------|
+| Backend | Python, Flask 3.1 |
+| Database | SQLite |
+| Templating | Jinja2 |
+| Frontend | HTML, CSS |
 
-1. Klona projektet
+---
+
+## Getting Started
+
+### 1. Clone the repository
+
 ```bash
 git clone <repo-url>
 cd auction-site
+```
 
-2. Skapa och aktivera virtuellt miljö
+### 2. Create and activate a virtual environment
+
+```bash
 python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
+source .venv/bin/activate       # Windows: .venv\Scripts\activate
+```
 
-3. Installera beroenden
+### 3. Install dependencies
+
+```bash
 pip install -r requirements.txt
+```
 
-4. pip install -r requirements.txt
+### 4. Initialise and seed the database
+
+```bash
 python init_db.py
 python seed_db.py
+```
 
-5. Starta applikationen
+### 5. Start the application
+
+```bash
 python run.py
+```
 
+The app will be available at **http://127.0.0.1:5000**.
 
-
-
-
+The admin panel is accessible at **http://127.0.0.1:5000/admin**.
